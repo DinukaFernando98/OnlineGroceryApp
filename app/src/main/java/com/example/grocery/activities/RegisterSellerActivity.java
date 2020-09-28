@@ -50,7 +50,7 @@ public class RegisterSellerActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST_CODE = 200;
     private static final int STORAGE_REQUEST_CODE = 300;
     private static final int IMAGE_PICK_GALLERY_CODE = 400;
-    private static final int IMAGE_PICK_CAMERA_CODE = 400;
+    private static final int IMAGE_PICK_CAMERA_CODE = 500;
 
     //permission arrays
     private String[] cameraPermissions;
@@ -185,10 +185,11 @@ public class RegisterSellerActivity extends AppCompatActivity {
 
     private void saveFirebaseData() {
         progressDialog.setMessage("Saving Account");
+        progressDialog.show();
 
         final String timestamp = ""+System.currentTimeMillis();
 
-        if(image_uri==null){
+        if(image_uri == null){
 
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("uid",""+firebaseAuth.getUid());
@@ -223,10 +224,10 @@ public class RegisterSellerActivity extends AppCompatActivity {
                     });
         }
         else{
-            String filePathAndName = "profile_images/" + ""+firebaseAuth.getUid();
+            String filePathandName = "profile_images/" + "" + firebaseAuth.getUid();
 
             //upload image
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathAndName);
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathandName);
             storageReference.putFile(image_uri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -234,6 +235,7 @@ public class RegisterSellerActivity extends AppCompatActivity {
                             Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
                             while (!uriTask.isSuccessful());
                             Uri downloadImageUri = uriTask.getResult();
+                            String image_uri = downloadImageUri.toString();
 
                             if(uriTask.isSuccessful()){
 
@@ -246,7 +248,7 @@ public class RegisterSellerActivity extends AppCompatActivity {
                                 hashMap.put("address",""+address);
                                 hashMap.put("deliveryFee",""+deliveryFee);
                                 hashMap.put("timestamp",""+timestamp);
-                                hashMap.put("profileImage",""+downloadImageUri);
+                                hashMap.put("profileImage", ""+downloadImageUri);
                                 hashMap.put("accountType","Seller");
 
                                 //save to db
@@ -322,13 +324,13 @@ public class RegisterSellerActivity extends AppCompatActivity {
     }
     private void pickFromCamera(){
         ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.Images.Media.TITLE, "Temp_image Title");
-        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp_image Description");
+        contentValues.put(MediaStore.Images.Media.TITLE, "Temp_Image Title");
+        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image Description");
 
         image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
+        startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
 
     }
 
@@ -396,6 +398,7 @@ public class RegisterSellerActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode==RESULT_OK){
+
             if(requestCode == IMAGE_PICK_GALLERY_CODE){
 
                 image_uri = data.getData();
