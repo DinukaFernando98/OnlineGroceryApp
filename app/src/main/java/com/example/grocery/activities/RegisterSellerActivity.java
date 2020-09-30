@@ -25,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+
 import com.example.grocery.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -42,21 +43,18 @@ import java.util.HashMap;
 public class RegisterSellerActivity extends AppCompatActivity {
 
     private ImageButton backBtn;
-    private ImageView profileIv;
+    private ImageView profileIv;;
     private EditText nameEt, shopNameET, phoneET, addressET, deliveryFeeET, emailET, passwordET, cPasswordET;
     private Button registerBtn;
 
-    //permissions
     private static final int CAMERA_REQUEST_CODE = 200;
     private static final int STORAGE_REQUEST_CODE = 300;
     private static final int IMAGE_PICK_GALLERY_CODE = 400;
-    private static final int IMAGE_PICK_CAMERA_CODE = 400;
+    private static final int IMAGE_PICK_CAMERA_CODE = 500;
 
-    //permission arrays
     private String[] cameraPermissions;
     private String[] storagePermissions;
 
-    //image picker
     private Uri image_uri;
 
     //firebase
@@ -69,6 +67,7 @@ public class RegisterSellerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_seller);
+
 
         backBtn = findViewById(R.id.backBtn);
         nameEt = findViewById(R.id.nameET);
@@ -83,20 +82,13 @@ public class RegisterSellerActivity extends AppCompatActivity {
         cPasswordET = findViewById(R.id.cPasswordET);
         registerBtn = findViewById(R.id.registerBtn);
 
-        //init permission array
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
         firebaseAuth = FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please wait..");
         progressDialog.setCanceledOnTouchOutside(false);
-
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
 
         profileIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,11 +100,12 @@ public class RegisterSellerActivity extends AppCompatActivity {
 
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 //register buyer
                 inputData();
             }
         });
+
     }
 
     private String fullName, shopName, phoneNumber, deliveryFee, address, email, password, confirmPassword;
@@ -184,11 +177,12 @@ public class RegisterSellerActivity extends AppCompatActivity {
     }
 
     private void saveFirebaseData() {
-        progressDialog.setMessage("Saving Account");
+        progressDialog.setMessage("Saving Account...");
+        progressDialog.show();
 
         final String timestamp = ""+System.currentTimeMillis();
 
-        if(image_uri==null){
+        if(image_uri == null){
 
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("uid",""+firebaseAuth.getUid());
@@ -202,9 +196,8 @@ public class RegisterSellerActivity extends AppCompatActivity {
             hashMap.put("profileImage","");
             hashMap.put("accountType","Seller");
 
-            //save to db
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-            ref.child(firebaseAuth.getUid()).setValue(hashMap)
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+            reference.child(firebaseAuth.getUid()).setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -223,10 +216,11 @@ public class RegisterSellerActivity extends AppCompatActivity {
                     });
         }
         else{
-            String filePathAndName = "profile_images/" + ""+firebaseAuth.getUid();
 
-            //upload image
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathAndName);
+
+            String filePathandName = "profile_images/" + "" + firebaseAuth.getUid();
+
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathandName);
             storageReference.putFile(image_uri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -246,12 +240,11 @@ public class RegisterSellerActivity extends AppCompatActivity {
                                 hashMap.put("address",""+address);
                                 hashMap.put("deliveryFee",""+deliveryFee);
                                 hashMap.put("timestamp",""+timestamp);
-                                hashMap.put("profileImage",""+downloadImageUri);
+                                hashMap.put("profileImage", ""+downloadImageUri);
                                 hashMap.put("accountType","Seller");
 
-                                //save to db
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-                                ref.child(firebaseAuth.getUid()).setValue(hashMap)
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+                                reference.child(firebaseAuth.getUid()).setValue(hashMap)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
@@ -269,6 +262,7 @@ public class RegisterSellerActivity extends AppCompatActivity {
                                             }
                                         });
                             }
+
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -281,39 +275,34 @@ public class RegisterSellerActivity extends AppCompatActivity {
         }
     }
 
+
     private void showImagePickDialog() {
-        String[] options = {"Camera", "Gallery"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String[] options={"Camera","Gallery"};
+        AlertDialog.Builder builder =  new AlertDialog.Builder(this);
         builder.setTitle("Pick Image")
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int which) {
-                        if(which == 0){
-                            //camera
+                        if (which==0){
                             if(checkCameraPermission()){
-                                //permissions allowed
                                 pickFromCamera();
                             }
                             else{
-                                //request
                                 requestCameraPermission();
                             }
-
                         }
                         else{
-                            //gallery
                             if(checkStoragePermission()){
-                                //permissions allowed
                                 pickFromGallery();
                             }
                             else{
-                                //request
                                 requestStoragePermission();
                             }
                         }
                     }
                 })
                 .show();
+
     }
     private void pickFromGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -322,38 +311,33 @@ public class RegisterSellerActivity extends AppCompatActivity {
     }
     private void pickFromCamera(){
         ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.Images.Media.TITLE, "Temp_image Title");
-        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp_image Description");
+        contentValues.put(MediaStore.Images.Media.TITLE, "Temp_Image_Title");
+        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image_Description");
 
         image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
+        startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
 
     }
 
-    private boolean checkStoragePermission(){
-        boolean result = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+    private  boolean checkStoragePermission(){
+        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                 (PackageManager.PERMISSION_GRANTED);
         return result;
     }
-
-    private  void requestStoragePermission(){
+    private void requestStoragePermission(){
         ActivityCompat.requestPermissions(this, storagePermissions, STORAGE_REQUEST_CODE);
     }
     private boolean checkCameraPermission(){
-        boolean result = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA) ==
+        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
                 (PackageManager.PERMISSION_GRANTED);
 
-        boolean result1 = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+        boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                 (PackageManager.PERMISSION_GRANTED);
-        return result && result1;
+        return  result && result1;
     }
-
-    private  void requestCameraPermission(){
+    private void requestCameraPermission(){
         ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
     }
 
@@ -365,12 +349,10 @@ public class RegisterSellerActivity extends AppCompatActivity {
                     boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                     if(cameraAccepted && storageAccepted){
-                        //allowed
                         pickFromCamera();
                     }
                     else{
-                        //req
-                        Toast.makeText(this,"Camera permissions are needed...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this,"Camera & Storage Permissions Required", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -379,12 +361,10 @@ public class RegisterSellerActivity extends AppCompatActivity {
                 if(grantResults.length>0){
                     boolean storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     if(storageAccepted){
-                        //allowed
                         pickFromGallery();
                     }
                     else{
-                        //req
-                        Toast.makeText(this,"Storage permissions are needed...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this,"Storage Permission is Required", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -395,17 +375,17 @@ public class RegisterSellerActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode==RESULT_OK){
+        if(resultCode == RESULT_OK){
             if(requestCode == IMAGE_PICK_GALLERY_CODE){
 
                 image_uri = data.getData();
 
                 profileIv.setImageURI(image_uri);
+
             }
             else if(requestCode == IMAGE_PICK_CAMERA_CODE){
                 profileIv.setImageURI(image_uri);
             }
-
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

@@ -8,18 +8,21 @@
 
     <!--Toolbar-->
     <RelativeLayout
+        android:id="@+id/toolbarRl"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:padding="10dp"
         android:background="@drawable/shape_rect01">
 
 
+
+
         <TextView
-            android:id="@+id/nameTv"
+            android:id="@+id/appMng"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="Name"
+            android:text="App Management"
             android:textStyle="bold"
             android:textSize="20sp"
             android:textColor="@color/colorWhite"/>
@@ -32,6 +35,7 @@
             android:background="@null"
             android:src="@drawable/ic_baseline_logout"
             />
+
         <ImageButton
             android:id="@+id/editProfileBtn"
             android:layout_width="30dp"
@@ -41,129 +45,96 @@
             android:src="@drawable/ic_baseline_edit_24"
             />
 
+        <LinearLayout
+            android:layout_below="@+id/appMng"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/shape_rect03"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+            <!--shops-->
+            <TextView
+                android:id="@+id/tabShopsTv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/shape_rect04"
+                android:text="Sellers"
+                android:textColor="@color/colorBlack"/>
+
+            <TextView
+                android:id="@+id/tabProductsTv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/shape_rect04"
+                android:text="Items"
+                android:textColor="@color/colorBlack">
+
+            </TextView>
+            <!--products-->
+            <TextView
+                android:id="@+id/tabBuyersTv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/shape_rect04"
+                android:text="Buyers"
+                android:textColor="@color/colorBlack">
+
+            </TextView>
+        </LinearLayout>
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/iconIv"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/shape_circle01"
-        android:layout_marginTop="60dp"
-        android:src="@drawable/ic_key_white"
-        android:padding="5dp"
-        android:layout_marginBottom="20dp"
-        android:layout_centerHorizontal="true"/>
-
-    <com.blogspot.atifsoftwares.circularimageview.CircularImageView
-        android:id="@+id/profileIv"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_below="@id/iconIv"
-        android:layout_centerHorizontal="true"
-        app:c_border="true"
-        app:c_border_color="@color/colorPrimary"
-        app:c_border_width="1dp"
-        android:layout_marginBottom="30dp"
-        android:src="@drawable/ic_person_grey"
-        />
-
-    <EditText
-        android:id="@+id/nameET"
-        android:layout_below="@id/profileIv"
+    <RelativeLayout
+        android:id="@+id/shopsRl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:hint="Full Name"
-        android:padding="10dp"
-        android:background="@drawable/shape_rect02"
-        android:drawableStart="@drawable/ic_person_grey"
-        android:drawablePadding="5dp"
-        android:inputType="textPersonName|textCapWords"
-        />
-    <EditText
-        android:id="@+id/phoneET"
-        android:layout_below="@id/nameET"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbarRl">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/shopsRv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/row_shop"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/productsRl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:hint="Contact Number"
-        android:padding="10dp"
-        android:background="@drawable/shape_rect02"
-        android:drawableStart="@drawable/ic_baseline_phone_24"
-        android:drawablePadding="5dp"
-        android:inputType="phone"
-        />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbarRl">
 
-    <EditText
-        android:id="@+id/addressET"
-        android:layout_below="@id/phoneET"
+        <!--View Buyers-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ProductsRv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/row_product_seller"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/buyersRl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:hint="Address"
-        android:padding="10dp"
-        android:background="@drawable/shape_rect02"
-        android:drawableStart="@drawable/ic_baseline_home_24"
-        android:drawablePadding="5dp"
-        android:inputType="textPostalAddress|textMultiLine"
-        />
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_below="@+id/toolbarRl">
 
-    <EditText
-        android:id="@+id/emailET"
-        android:layout_below="@id/addressET"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:hint="Email"
-        android:padding="10dp"
-        android:background="@drawable/shape_rect02"
-        android:drawableStart="@drawable/ic_mail_grey"
-        android:drawablePadding="5dp"
-        android:inputType="textEmailAddress"
-        />
-
-    <EditText
-        android:id="@+id/passwordET"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_below="@id/emailET"
-        android:hint="Password"
-        android:padding="10dp"
-        android:layout_marginBottom="40dp"
-        android:background="@drawable/shape_rect02"
-        android:drawableStart="@drawable/ic_key_grey"
-        android:drawablePadding="5dp"
-        android:inputType="textPassword"
-        />
-
-    <EditText
-        android:id="@+id/cPasswordET"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_below="@id/passwordET"
-        android:hint="Confirm Password"
-        android:padding="10dp"
-        android:layout_marginBottom="40dp"
-        android:background="@drawable/shape_rect02"
-        android:drawableStart="@drawable/ic_key_grey"
-        android:drawablePadding="5dp"
-        android:inputType="textPassword"
-        />
-
-    <Button
-        android:id="@+id/registerBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minWidth="120dp"
-        android:layout_below="@id/cPasswordET"
-        android:background="#85B54F"
-        android:layout_marginTop="30dp"
-        android:textColor="#FFFFFF"
-        android:layout_centerHorizontal="true"
-        android:text="Create Account"
-        android:drawablePadding="5dp"
-        />
-
+        <!--View Buyers-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/buyersRv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        <!--tools:listitem="@layout/row_order_buyer"/>-->
+    </RelativeLayout>
 </RelativeLayout>

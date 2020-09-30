@@ -37,6 +37,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
@@ -51,7 +52,7 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST_CODE = 200;
     private static final int STORAGE_REQUEST_CODE = 300;
     private static final int IMAGE_PICK_GALLERY_CODE = 400;
-    private static final int IMAGE_PICK_CAMERA_CODE = 400;
+    private static final int IMAGE_PICK_CAMERA_CODE = 500;
 
     //permission arrays
     private String[] cameraPermissions;
@@ -119,6 +120,51 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
         });
     }
 
+    private void loadMyInfo() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference.orderByChild("uid").equalTo(firebaseAuth.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds: dataSnapshot.getChildren()){
+                            String accountType = ""+ds.child("accountType").getValue();
+                            String address = ""+ds.child("address").getValue();
+                            String name = ""+ds.child("name").getValue();
+                            String shopName = ""+ds.child("shopName").getValue();
+                            String deliveryFee = ""+ds.child("deliveryFee").getValue();
+                            String email = ""+ds.child("email").getValue();
+                            String phoneNumber = ""+ds.child("phoneNumber").getValue();
+                            String timestamp = ""+ds.child("timestamp").getValue();
+                            String uid = ""+ds.child("uid").getValue();
+                            String profileImage = ""+ds.child("profileImage").getValue();
+
+                            nameET.setText(name);
+                            shopNameET.setText(shopName);
+                            phoneET.setText(phoneNumber);
+                            addressET.setText(address);
+                            deliveryFeeET.setText(deliveryFee);
+                            emailET.setText(email);
+                            accTypeET.setText(accountType);
+                            uidET.setText(uid);
+                            timestampET.setText(timestamp);
+                            accTypeET.setText(accountType);
+
+                            try {
+                                Picasso.get().load(profileImage).placeholder(R.drawable.ic_baseline_add_shopping_cart_24).into(profileIv);
+                            }catch (Exception e){
+                                profileIv.setImageResource(R.drawable.ic_baseline_add_shopping_cart_24);
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
     private String name, shopName, phoneNumber, deliveryFee, address, email, accType, uid, timestamp;
     private void inputData() {
         name = nameET.getText().toString().trim();
@@ -133,6 +179,21 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
 
         updateProfile();
     }
+
+
+
+    private void checkUser() {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if(user == null){
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+            finish();
+        }
+        else{
+            loadMyInfo();
+        }
+    }
+
+
 
     private  void updateProfile(){
         progressDialog.setMessage("Updating profile...");
@@ -151,6 +212,7 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
             hashMap.put("address",""+address);
             hashMap.put("deliveryFee",""+deliveryFee);
             hashMap.put("accountType","Seller");
+            hashMap.put("profileImage","" + profileIv);
 
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
             ref.child(firebaseAuth.getUid()).setValue(hashMap)
@@ -226,58 +288,6 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
                     });
 
         }
-    }
-
-    private void checkUser() {
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        if(user == null){
-            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-            finish();
-        }
-        else{
-            loadMyInfo();
-        }
-    }
-
-    private void loadMyInfo() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-        ref.orderByChild("uid").equalTo(firebaseAuth.getUid())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot ds: dataSnapshot.getChildren()){
-                            String accountType = ""+ds.child("accountType").getValue();
-                            String address = ""+ds.child("address").getValue();
-                            String name = ""+ds.child("name").getValue();
-                            String shopName = ""+ds.child("shopName").getValue();
-                            String deliveryFee = ""+ds.child("deliveryFee").getValue();
-                            String email = ""+ds.child("email").getValue();
-                            String phoneNumber = ""+ds.child("phoneNumber").getValue();
-                            String timestamp = ""+ds.child("timestamp").getValue();
-                            String uid = ""+ds.child("uid").getValue();
-
-                            nameET.setText(name);
-                            shopNameET.setText(shopName);
-                            phoneET.setText(phoneNumber);
-                            addressET.setText(address);
-                            deliveryFeeET.setText(deliveryFee);
-                            emailET.setText(email);
-                            accTypeET.setText(accountType);
-                            uidET.setText(uid);
-                            timestampET.setText(timestamp);
-                            accTypeET.setText(accountType);
-
-                            profileIv.setImageResource(R.drawable.ic_person_grey);
-
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
     }
 
     private void showImagePickDialog(){

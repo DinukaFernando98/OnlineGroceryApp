@@ -22,12 +22,12 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="#79000000"/>
+            android:src="@color/colorGray01"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="48dp"
             android:padding="10dp">
 
             <TextView
@@ -134,8 +134,21 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
                 android:background="@null"
                 android:src="@drawable/ic_baseline_cart_grey"
+                />
+            <TextView
+                android:id="@+id/cartCountTv"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+
+                android:text="10"
+                android:textColor="@color/colorWhite"
+                android:textSize="8sp"
+                android:gravity="center"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/shape_circle03"
                 />
 
         </RelativeLayout>
