@@ -242,6 +242,7 @@ public class addProductActivity extends AppCompatActivity {
                             }
                         });
             }
+        startActivity(new Intent(addProductActivity.this, MainSellerActivity.class));
     }
 
     private void clearData(){

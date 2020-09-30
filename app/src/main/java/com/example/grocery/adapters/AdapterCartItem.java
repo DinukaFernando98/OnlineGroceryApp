@@ -84,6 +84,8 @@ public class AdapterCartItem extends RecyclerView.Adapter<AdapterCartItem.Holder
                 ((shopDetailsActivity)context).sTotalTv.setText("LKR"+String.format("%.2f", sTotalPrice));
                 ((shopDetailsActivity)context).allTotalPriceTv.setText("LKR"+String.format("%.2f", Double.parseDouble(String.format("%.2f", totalPrice))));
 
+                ((shopDetailsActivity)context).cartCount();
+
             }
         });
     }
