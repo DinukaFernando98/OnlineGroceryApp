@@ -61,5 +61,36 @@
     <string name="addressTv">addressTv</string>
     <string name="callBtn">callBtn</string>
     <string name="cartBtn">cartBtn</string>
+    <string name="nextIv">nextIv</string>
+    <string name="titleTv">titleTv</string>
+    <string name="descriptionTv">descriptionTv</string>
+    <string name="originalPriceTv">originalPriceTv</string>
+    <string name="addToCartTv">addToCartTv</string>
+    <string name="quantityTv">quantityTv</string>
+    <string name="orderIdTv">orderIdTv</string>
+    <string name="dateTv">dateTv</string>
+    <string name="amountTv">amountTv</string>
+    <string name="statusTv">statusTv</string>
+    <string name="itemTitleTv">itemTitleTv</string>
+    <string name="itemPriceTv">itemPriceTv</string>
+    <string name="itemPriceEachTv">itemPriceEachTv</string>
+    <string name="itemQuantityTv">itemQuantityTv</string>
+    <string name="itemRemoveTv">itemRemoveTv</string>
+    <string name="productIv">productIv</string>
+    <string name="pQuantityTv">pQuantityTv</string>
+    <string name="finalPriceTv">finalPriceTv</string>
+    <string name="decrementBtn">decrementBtn</string>
+    <string name="incrementBtn">incrementBtn</string>
+    <string name="continueBtn">continueBtn</string>
+    <string name="cartItemsRv">cartItemsRv</string>
+    <string name="pricesLayout">pricesLayout</string>
+    <string name="sTotalLabelTv">sTotalLabelTv</string>
+    <string name="sTotalTv">sTotalTv</string>
+    <string name="dFeeLabelTv">dFeeLabelTv</string>
+    <string name="dFeeTv">dFeeTv</string>
+    <string name="totalLabelTv">totalLabelTv</string>
+    <string name="totalTv">totalTv</string>
+    <string name="deleteBtn">deleteBtn</string>
+    <string name="editBtn">editBtn</string>
 
 </resources>
