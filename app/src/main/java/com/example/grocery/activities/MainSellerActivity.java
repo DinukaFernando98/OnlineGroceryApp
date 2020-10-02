@@ -14,6 +14,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -41,6 +43,7 @@ public class MainSellerActivity extends AppCompatActivity {
     private RecyclerView ProductsRv, ordersRv;
     private ProgressDialog progressDialog;
     private EditText searchProductEt;
+    private ImageView profileIv;
 
     private ArrayList<ModelProduct> productList;
     private AdapterProductSeller adapterProductSeller;
@@ -69,6 +72,7 @@ public class MainSellerActivity extends AppCompatActivity {
         filterOrdersTv = findViewById(R.id.filterOrdersTv);
         filterOrdersbtn = findViewById(R.id.filterOrdersbtn);
         ordersRv = findViewById(R.id.ordersRv);
+        profileIv = findViewById(R.id.profileIv);
 
 
         progressDialog = new ProgressDialog(this);
@@ -323,7 +327,16 @@ public class MainSellerActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot ds: dataSnapshot.getChildren()){
                             String name = ""+ds.child("name").getValue();
+                            String profileImage = ""+ds.child("profileImage").getValue();
+
                             nameTv.setText(name);
+
+                            try {
+                                Picasso.get().load(profileImage).placeholder(R.drawable.ic_baseline_add_shopping_cart_24).into(profileIv);
+                            }catch (Exception e){
+                                profileIv.setImageResource(R.drawable.ic_baseline_add_shopping_cart_24);
+                            }
+
                         }
 
                     }

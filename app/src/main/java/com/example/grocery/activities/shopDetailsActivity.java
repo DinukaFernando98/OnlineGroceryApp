@@ -374,7 +374,7 @@ public class shopDetailsActivity extends AppCompatActivity {
                 String name = ""+dataSnapshot.child("name").getValue();
                  shopName = ""+dataSnapshot.child("shopName").getValue();
                  shopEmail = ""+dataSnapshot.child("email").getValue();
-                 shopPhone = ""+dataSnapshot.child("phone").getValue();
+                 shopPhone = ""+dataSnapshot.child("phoneNumber").getValue();
                  shopAddress = ""+dataSnapshot.child("address").getValue();
                  deliveryFee = ""+dataSnapshot.child("deliveryFee").getValue();
                 profileImage = ""+dataSnapshot.child("profileImage").getValue();

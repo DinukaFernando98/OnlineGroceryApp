@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -34,6 +36,7 @@ public class MainBuyerActivity extends AppCompatActivity {
     private ImageButton logoutBtn, editProfileBtn;
     private FirebaseAuth firebaseAuth;
     private RecyclerView shopsRv, ordersRv;
+    private ImageView profileIv;
 
     private ProgressDialog progressDialog;
 
@@ -57,6 +60,7 @@ public class MainBuyerActivity extends AppCompatActivity {
         ordersRl = findViewById(R.id.ordersRl);
         shopsRv = findViewById(R.id.shopsRv);
         ordersRv = findViewById(R.id.ordersRv);
+        profileIv = findViewById(R.id.profileIv);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please wait...");
@@ -135,7 +139,15 @@ public class MainBuyerActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot ds: dataSnapshot.getChildren()){
                             String name = ""+ds.child("name").getValue();
+                            String profileImage = ""+ds.child("profileImage").getValue();
+
                             nameTv.setText(name);
+
+                            try {
+                                Picasso.get().load(profileImage).placeholder(R.drawable.ic_baseline_add_shopping_cart_24).into(profileIv);
+                            }catch (Exception e){
+                                profileIv.setImageResource(R.drawable.ic_baseline_add_shopping_cart_24);
+                            }
 
                             loadShops();
                             loadOrders();

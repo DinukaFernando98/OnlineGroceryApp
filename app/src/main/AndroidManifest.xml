@@ -16,7 +16,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".activities.OrderDetailsSellerActivity"></activity>
+        <activity android:name=".activities.AdminBuyerDetailsActivity"></activity>
+        <activity android:name=".activities.AdminDeleteProductActivity" />
+        <activity android:name=".activities.ForgotPasswordActivity" />
+        <activity android:name=".activities.AdminShopDetailsActivity" />
+        <activity android:name=".activities.BuyerDetailsActivity" />
+        <activity android:name=".activities.OrderDetailsSellerActivity" />
         <activity android:name=".activities.OrderDetailsUserActivity" />
         <activity
             android:name=".activities.shopDetailsActivity"

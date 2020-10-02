@@ -9,12 +9,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.grocery.R;
+import com.example.grocery.adapters.AdapterBuyerAdmin;
 import com.example.grocery.adapters.AdapterProductSeller;
+import com.example.grocery.adapters.AdapterProductUser;
 import com.example.grocery.adapters.AdapterShop;
+import com.example.grocery.adapters.AdapterShopAdmin;
+import com.example.grocery.models.ModelBuyer;
 import com.example.grocery.models.ModelProduct;
 import com.example.grocery.models.ModelShop;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,23 +29,25 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class MainAdminActivity extends AppCompatActivity {
-    private TextView tabShopsTv, tabProductsTv, tabBuyersTv;
-    private RelativeLayout shopsRl, productsRl, buyersRl;
+    private TextView tabShopsTv, nameTv;
+    private RelativeLayout shopsRl;
     private ImageButton logoutBtn, editProfileBtn;
     private FirebaseAuth firebaseAuth;
-    private RecyclerView shopsRv, ProductsRv, buyersRv;
+    private RecyclerView shopsRv;
+    private ImageView profileIv;
 
     private ProgressDialog progressDialog;
 
     private ArrayList<ModelShop> shopsList;
-    private AdapterShop adapterShop;
+    private AdapterShopAdmin adapterShopAdmin;
 
-    private ArrayList<ModelProduct> productList;
-    private AdapterProductSeller adapterProductSeller;
+    private ArrayList<ModelBuyer> buyerArrayList;
+    private AdapterBuyerAdmin adapterBuyerAdmin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,14 +57,14 @@ public class MainAdminActivity extends AppCompatActivity {
         logoutBtn = findViewById(R.id.logoutBtn);
         editProfileBtn = findViewById(R.id.editProfileBtn);
         tabShopsTv = findViewById(R.id.tabShopsTv);
-        tabProductsTv = findViewById(R.id.tabProductsTv);
-        tabBuyersTv = findViewById(R.id.tabBuyersTv);
         shopsRv = findViewById(R.id.shopsRv);
-        ProductsRv = findViewById(R.id.ProductsRv);
-        buyersRv = findViewById(R.id.buyersRv);
+        //ProductsRv = findViewById(R.id.ProductsRv);
         shopsRl = findViewById(R.id.shopsRl);
-        productsRl = findViewById(R.id.productsRl);
-        buyersRl = findViewById(R.id.buyersRl);
+        profileIv = findViewById(R.id.profileIv);
+        nameTv = findViewById(R.id.nameTv);
+
+
+
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please wait...");
@@ -65,6 +72,8 @@ public class MainAdminActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         checkUser();
         showShopsUI();
+        //loadAllProducts();
+
 
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,66 +97,18 @@ public class MainAdminActivity extends AppCompatActivity {
             }
         });
 
-        tabProductsTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showProductsUI();
-            }
-        });
 
-        tabBuyersTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showBuyersUI();
-            }
-        });
     }
 
     private void showShopsUI() {
+        //show all shops
         shopsRl.setVisibility(View.VISIBLE);
-        productsRl.setVisibility(View.GONE);
-        buyersRl.setVisibility(View.GONE);
+
 
         tabShopsTv.setTextColor(getResources().getColor(R.color.colorBlack));
         tabShopsTv.setBackgroundResource(R.drawable.shape_rect04);
 
-        tabProductsTv.setTextColor(getResources().getColor(R.color.colorWhite));
-        tabProductsTv.setBackgroundColor(getResources().getColor(android.R.color.transparent));
 
-        tabBuyersTv.setTextColor(getResources().getColor(R.color.colorWhite));
-        tabBuyersTv.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-    }
-
-    private void  showProductsUI () {
-        //show products ui and hide orders ui
-        productsRl.setVisibility(View.VISIBLE);
-        shopsRl.setVisibility(View.GONE);
-        buyersRl.setVisibility(View.GONE);
-
-        tabProductsTv.setTextColor(getResources().getColor(R.color.colorBlack));
-        tabProductsTv.setBackgroundResource(R.drawable.shape_rect04);
-
-        tabShopsTv.setTextColor(getResources().getColor(R.color.colorWhite));
-        tabShopsTv.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-
-        tabBuyersTv.setTextColor(getResources().getColor(R.color.colorWhite));
-        tabBuyersTv.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-    }
-
-    private void  showBuyersUI () {
-        //show products ui and hide orders ui
-        productsRl.setVisibility(View.VISIBLE);
-        shopsRl.setVisibility(View.GONE);
-        productsRl.setVisibility(View.GONE);
-
-        tabProductsTv.setTextColor(getResources().getColor(R.color.colorBlack));
-        tabProductsTv.setBackgroundResource(R.drawable.shape_rect04);
-
-        tabBuyersTv.setTextColor(getResources().getColor(R.color.colorWhite));
-        tabBuyersTv.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-
-        tabBuyersTv.setTextColor(getResources().getColor(R.color.colorWhite));
-        tabBuyersTv.setBackgroundColor(getResources().getColor(android.R.color.transparent));
     }
 
     private void checkUser() {
@@ -169,8 +130,19 @@ public class MainAdminActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for (DataSnapshot ds: dataSnapshot.getChildren()){
                             String name = ""+ds.child("name").getValue();
+                            String profileImage = ""+ds.child("profileImage").getValue();
+
+                            nameTv.setText(name);
+
+                            try {
+                                Picasso.get().load(profileImage).placeholder(R.drawable.ic_baseline_add_shopping_cart_24).into(profileIv);
+                            }catch (Exception e){
+                                profileIv.setImageResource(R.drawable.ic_baseline_add_shopping_cart_24);
+                            }
+
                             loadShops();
-                            loadAllProducts();
+                            //loadAllProducts();
+
                         }
 
                     }
@@ -181,7 +153,6 @@ public class MainAdminActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
     private void loadShops() {
 
@@ -198,33 +169,8 @@ public class MainAdminActivity extends AppCompatActivity {
 
                             shopsList.add(modelShop);
                         }
-                        adapterShop = new AdapterShop(MainAdminActivity.this, shopsList);
-                        shopsRv.setAdapter(adapterShop);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-    }
-
-    private void loadAllProducts() {
-        productList = new ArrayList<>();
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
-        reference.child("Users").child("Products")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for(DataSnapshot ds: dataSnapshot.getChildren()){
-                            ModelProduct modelProduct = ds.getValue(ModelProduct.class);
-                            productList.add(modelProduct);
-                        }
-
-                        adapterProductSeller = new AdapterProductSeller(MainAdminActivity.this, productList);
-
-                        ProductsRv.setAdapter(adapterProductSeller);
+                        adapterShopAdmin = new AdapterShopAdmin(MainAdminActivity.this, shopsList);
+                        shopsRv.setAdapter(adapterShopAdmin);
                     }
 
                     @Override

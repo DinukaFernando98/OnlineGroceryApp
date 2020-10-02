@@ -50,7 +50,7 @@ public class RegisterBuyerActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST_CODE = 200;
     private static final int STORAGE_REQUEST_CODE = 300;
     private static final int IMAGE_PICK_GALLERY_CODE = 400;
-    private static final int IMAGE_PICK_CAMERA_CODE = 400;
+    private static final int IMAGE_PICK_CAMERA_CODE = 500;
 
     //permission arrays
     private String[] cameraPermissions;
@@ -82,11 +82,11 @@ public class RegisterBuyerActivity extends AppCompatActivity {
         //init permission array
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
         firebaseAuth = FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please wait..");
         progressDialog.setCanceledOnTouchOutside(false);
-
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -297,31 +297,6 @@ public class RegisterBuyerActivity extends AppCompatActivity {
                 })
                 .show();
     }
-    private boolean checkStoragePermission(){
-        boolean result = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                (PackageManager.PERMISSION_GRANTED);
-        return result;
-    }
-
-    private  void requestStoragePermission(){
-        ActivityCompat.requestPermissions(this, storagePermissions, STORAGE_REQUEST_CODE);
-    }
-    private boolean checkCameraPermission(){
-        boolean result = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA) ==
-                (PackageManager.PERMISSION_GRANTED);
-
-        boolean result1 = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                (PackageManager.PERMISSION_GRANTED);
-        return result && result1;
-    }
-
-    private  void requestCameraPermission(){
-        ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
-    }
-
     private void pickFromGallery(){
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
@@ -329,16 +304,36 @@ public class RegisterBuyerActivity extends AppCompatActivity {
     }
     private void pickFromCamera(){
         ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.Images.Media.TITLE, "Temp_image Title");
-        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp_image Description");
+        contentValues.put(MediaStore.Images.Media.TITLE, "Temp_Image_Title");
+        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image_Description");
 
         image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
+        startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
 
     }
 
+    private  boolean checkStoragePermission(){
+        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                (PackageManager.PERMISSION_GRANTED);
+        return result;
+    }
+
+    private void requestStoragePermission(){
+        ActivityCompat.requestPermissions(this, storagePermissions, STORAGE_REQUEST_CODE);
+    }
+    private boolean checkCameraPermission(){
+        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
+                (PackageManager.PERMISSION_GRANTED);
+
+        boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                (PackageManager.PERMISSION_GRANTED);
+        return  result && result1;
+    }
+    private void requestCameraPermission(){
+        ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
@@ -377,15 +372,17 @@ public class RegisterBuyerActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode==RESULT_OK){
+        if(resultCode == RESULT_OK){
             if(requestCode == IMAGE_PICK_GALLERY_CODE){
+
                 image_uri = data.getData();
+
                 profileIv.setImageURI(image_uri);
+
             }
             else if(requestCode == IMAGE_PICK_CAMERA_CODE){
                 profileIv.setImageURI(image_uri);
             }
-
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
