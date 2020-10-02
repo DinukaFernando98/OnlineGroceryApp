@@ -91,6 +91,9 @@
     <string name="totalLabelTv">totalLabelTv</string>
     <string name="totalTv">totalTv</string>
     <string name="deleteBtn">deleteBtn</string>
-    <string name="editBtn">editBtn</string>
+    <string name="orderStatusTv">orderStatusTv</string>
+    <string name="phoneTv">phoneTv</string>
+    <string name="totalItemsTv">totalItemsTv</string>
+    <string name="itemsRv">itemsRv</string>
 
 </resources>
