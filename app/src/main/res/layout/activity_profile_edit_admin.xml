@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="Edit Profile"
+            android:text="Admin Profile"
             android:textStyle="bold"
             android:textSize="20sp"
             android:textColor="@color/colorWhite"/>
@@ -121,9 +121,40 @@
         android:background="#85B54F"
         android:layout_marginTop="30dp"
         android:textColor="#FFFFFF"
-        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="220dp"
         android:text="Update"
         android:drawablePadding="5dp"
         />
+    <Button
+        android:id="@+id/deleteBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="120dp"
+        android:layout_below="@id/emailET"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="80dp"
+        android:background="#DC491C"
+        android:textColor="#FFFFFF"
+        android:text="Delete"
+        android:drawablePadding="5dp"
+        />
+
+    <EditText
+        android:id="@+id/accTypeET"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"></EditText>
+
+    <EditText
+        android:id="@+id/uidET"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"></EditText>
+
+    <EditText
+        android:id="@+id/timestampET"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"></EditText>
 
 </RelativeLayout>

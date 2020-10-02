@@ -10,7 +10,7 @@
     <RelativeLayout
         android:id="@+id/toolbarRl"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="140dp"
         android:padding="10dp"
         android:background="@drawable/shape_rect01">
 
@@ -21,11 +21,32 @@
             android:id="@+id/nameTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            android:layout_toEndOf="@id/profileIv"
             android:text="Name"
             android:textStyle="bold"
             android:textSize="20sp"
             android:textColor="@color/colorWhite"/>
+
+        <TextView
+            android:id="@+id/appTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="BuyMe"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="@color/colorWhite"/>
+
+        <com.blogspot.atifsoftwares.circularimageview.CircularImageView
+            android:id="@+id/profileIv"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginEnd="10dp"
+            app:c_border="true"
+            app:c_border_color="@color/colorWhite"
+            android:src="@drawable/ic_person_grey"
+            />
 
         <ImageButton
             android:id="@+id/logoutBtn"
@@ -42,11 +63,11 @@
             android:layout_height="30dp"
             android:background="@null"
             android:layout_toStartOf="@+id/logoutBtn"
-            android:src="@drawable/ic_baseline_edit_24"
+            android:src="@drawable/ic_baseline_person_white"
             />
 
         <LinearLayout
-            android:layout_below="@+id/nameTv"
+            android:layout_below="@+id/profileIv"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:background="@drawable/shape_rect03"

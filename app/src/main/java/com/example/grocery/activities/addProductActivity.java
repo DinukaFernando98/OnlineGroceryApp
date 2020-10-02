@@ -106,6 +106,13 @@ public class addProductActivity extends AppCompatActivity {
             }
         });
 
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
         backHomeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -242,7 +249,7 @@ public class addProductActivity extends AppCompatActivity {
                             }
                         });
             }
-        startActivity(new Intent(addProductActivity.this, MainSellerActivity.class));
+        //startActivity(new Intent(addProductActivity.this, MainSellerActivity.class));
     }
 
     private void clearData(){

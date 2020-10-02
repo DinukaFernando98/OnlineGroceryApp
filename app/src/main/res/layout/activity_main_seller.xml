@@ -10,7 +10,7 @@
     <RelativeLayout
         android:id="@+id/toolbarRl"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="140dp"
         android:padding="10dp"
         android:background="@drawable/shape_rect01">
 
@@ -21,11 +21,32 @@
             android:id="@+id/nameTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            android:layout_toEndOf="@id/profileIv"
             android:text="Name"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="@color/colorWhite"/>
+
+        <TextView
+            android:id="@+id/appTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="BuyMe"
             android:textStyle="bold"
             android:textSize="20sp"
             android:textColor="@color/colorWhite"/>
+
+        <com.blogspot.atifsoftwares.circularimageview.CircularImageView
+            android:id="@+id/profileIv"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginEnd="10dp"
+            app:c_border="true"
+            app:c_border_color="@color/colorWhite"
+            android:src="@drawable/ic_person_grey"
+            />
 
         <ImageButton
             android:id="@+id/logoutBtn"
@@ -42,7 +63,7 @@
             android:layout_height="30dp"
             android:background="@null"
             android:layout_toStartOf="@+id/logoutBtn"
-            android:src="@drawable/ic_baseline_edit_24"
+            android:src="@drawable/ic_baseline_person_white"
             />
 
         <ImageButton
@@ -55,7 +76,7 @@
             />
 
         <LinearLayout
-                android:layout_below="@+id/nameTv"
+                android:layout_below="@+id/profileIv"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="@drawable/shape_rect03"
@@ -86,105 +107,106 @@
 
                 </TextView>
             </LinearLayout>
-        </RelativeLayout>
-        <!--Products-->
-        <RelativeLayout
-            android:id="@+id/productsRl"
-            android:visibility="gone"
-            android:layout_below="@+id/toolbarRl"
+    </RelativeLayout>
+    <!--Products-->
+    <RelativeLayout
+        android:id="@+id/productsRl"
+        android:visibility="gone"
+       android:layout_below="@+id/toolbarRl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!--SearchView-->
+        <EditText
+            android:id="@+id/searchProductEt"
+            android:layout_width= "match_parent"
+            android:layout_height = "wrap_content"
+            android:layout_margin = "5dp"
+            android:background = "@drawable/shape_rect02"
+            android:drawableStart= "@drawable/ic_search_gray"
+            android:layout_toStartOf="@id/filterProductBtn"
+            android:drawablePadding="10dp"
+            android:hint="Search"
+            android:padding="10dp"
+            >
+        </EditText>
+        <!--filter-->
+        <ImageButton
+            android:id="@+id/filterProductBtn"
+            android:layout_width= "45dp"
+            android:layout_height = "45dp"
+            android:layout_alignParentEnd = "true"
+            android:layout_marginTop = "5dp"
+            android:layout_marginEnd= "5dp"
+            android:background= "@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_filter_gray"
+            >
+        </ImageButton>
+
+        <!--show filtered product title-->
+        <TextView
+            android:id="@+id/filteredProductsTv"
+            android:layout_width= "wrap_content"
+            android:layout_height = "wrap_content"
+            android:layout_below = "@+id/searchProductEt"
+            android:textColor="@color/colorBlack"
+            android:text="Showing All"
+            android:layout_marginStart= "5dp"
+            android:layout_marginBottom= "5dp"/>
+
+        <!--RecyclerView:show products-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ProductsRv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <!--SearchView-->
-            <EditText
-                android:id="@+id/searchProductEt"
-                android:layout_width= "match_parent"
-                android:layout_height = "wrap_content"
-                android:layout_margin = "5dp"
-                android:background = "@drawable/shape_rect02"
-                android:drawableStart= "@drawable/ic_search_gray"
-                android:layout_toStartOf="@id/filterProductBtn"
-                android:drawablePadding="10dp"
-                android:hint="Search"
-                android:padding="10dp"
-                >
-            </EditText>
-            <!--filter-->
-            <ImageButton
-                android:id="@+id/filterProductBtn"
-                android:layout_width= "45dp"
-                android:layout_height = "45dp"
-                android:layout_alignParentEnd = "true"
-                android:layout_marginTop = "5dp"
-                android:layout_marginEnd= "5dp"
-                android:background= "@null"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_filter_gray"
-                >
-            </ImageButton>
-
-            <!--show filtered product title-->
-            <TextView
-                android:id="@+id/filteredProductsTv"
-                android:layout_width= "wrap_content"
-                android:layout_height = "wrap_content"
-                android:layout_below = "@+id/searchProductEt"
-                android:textColor="@color/colorBlack"
-                android:text="Showing All"
-                android:layout_marginStart= "5dp"
-                android:layout_marginBottom= "5dp"/>
-
-            <!--RecyclerView:show products-->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/ProductsRv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below = "@id/filteredProductsTv"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/row_product_seller">
-            </androidx.recyclerview.widget.RecyclerView>
+            android:layout_height="match_parent"
+            android:layout_below = "@id/filteredProductsTv"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/row_product_seller">
+        </androidx.recyclerview.widget.RecyclerView>
 
 
-        </RelativeLayout>
-        <!--Orders-->
-        <RelativeLayout
-            android:id="@+id/ordersRl"
-            android:layout_below="@+id/toolbarRl"
+    </RelativeLayout>
+    <!--Orders-->
+    <RelativeLayout
+        android:id="@+id/ordersRl"
+        android:layout_below="@+id/toolbarRl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--search/filter-->
+        <TextView
+            android:id="@+id/filterOrdersTv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_toStartOf="@id/filterOrdersbtn"
+            android:background="@drawable/shape_rect02"
+            android:padding="10dp"
+            android:text="Showing All Orders">
 
-            <!--search/filter-->
-            <TextView
-                android:id="@+id/filterOrdersTv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_toStartOf="@id/filterOrdersbtn"
-                android:background="@drawable/shape_rect02"
-                android:padding="10dp"
-                android:text="Showing All Orders">
-                
-            </TextView>
+        </TextView>
 
-            <ImageButton
-                android:id="@+id/filterOrdersbtn"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:background="@null"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_filter_gray"/>
+        <ImageButton
+            android:id="@+id/filterOrdersbtn"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_filter_gray"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/ordersRv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:reverseLayout="true"
-                app:stackFromEnd="true"
-                tools:listitem="@layout/row_order_seller"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ordersRv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:reverseLayout="true"
+            app:stackFromEnd="true"
+            tools:listitem="@layout/row_order_seller"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            />
 
-        </RelativeLayout>
+    </RelativeLayout>
+
 </RelativeLayout>

@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.grocery.R;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -46,7 +47,7 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
     private ImageView profileIv;
     private EditText nameET, shopNameET, phoneET, addressET, deliveryFeeET, emailET, accTypeET,
     uidET, timestampET;
-    private Button updateBtn;
+    private Button updateBtn, deleteBtn;
 
     //permissions
     private static final int CAMERA_REQUEST_CODE = 200;
@@ -64,6 +65,7 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
     //firebase
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
+    private FirebaseUser firebaseUser;
 
 
 
@@ -85,18 +87,19 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
         accTypeET = findViewById(R.id.accTypeET);
         uidET = findViewById(R.id.uidET);
         timestampET = findViewById(R.id.timestampET);
+        deleteBtn = findViewById(R.id.deleteBtn);
 
         //init permission array
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         firebaseAuth = FirebaseAuth.getInstance();
-        checkUser();
-        loadMyInfo();
-
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please wait..");
         progressDialog.setCanceledOnTouchOutside(false);
+
+        checkUser();
+        loadMyInfo();
 
 
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +120,41 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
             public void onClick(View view) {
                 inputData();
         }
+        });
+
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(ProfileEditSellerActivity.this);
+                dialog.setTitle("Are you sure you want to delete this account ?");
+                dialog.setMessage("Deleting this account will result in completely removing your" + "account from the system and you won't be able to access the app");
+                dialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        firebaseUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(ProfileEditSellerActivity.this, "Account Deleted", Toast.LENGTH_SHORT).show();
+
+                                    firebaseAuth.signOut();
+                                    checkUser();
+                                }else{
+                                    Toast.makeText(ProfileEditSellerActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                });
+                dialog.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                AlertDialog alertDialog = dialog.create();
+                alertDialog.show();
+            }
         });
     }
 
@@ -145,8 +183,8 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
                             deliveryFeeET.setText(deliveryFee);
                             emailET.setText(email);
                             accTypeET.setText(accountType);
-                            uidET.setText(uid);
-                            timestampET.setText(timestamp);
+                            //uidET.setText(uid);
+                            //timestampET.setText(timestamp);
                             accTypeET.setText(accountType);
 
                             try {
@@ -174,13 +212,10 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
         deliveryFee = deliveryFeeET.getText().toString().trim();
         email = emailET.getText().toString().trim();
         accType = accTypeET.getText().toString().trim();
-        uid = uidET.getText().toString().trim();
-        timestamp = timestampET.getText().toString().trim();
+
 
         updateProfile();
     }
-
-
 
     private void checkUser() {
         FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -198,13 +233,14 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
     private  void updateProfile(){
         progressDialog.setMessage("Updating profile...");
         progressDialog.show();
+
         final String timestamp = ""+System.currentTimeMillis();
 
         if(image_uri == null){
 
             HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put("uid",""+firebaseAuth.getUid());
-            hashMap.put("timestamp",""+timestamp);
+            //hashMap.put("uid",""+firebaseAuth.getUid());
+            //hashMap.put("timestamp",""+timestamp);
             hashMap.put("email",""+email);
             hashMap.put("name",""+name);
             hashMap.put("shopName",""+shopName);
@@ -212,10 +248,10 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
             hashMap.put("address",""+address);
             hashMap.put("deliveryFee",""+deliveryFee);
             hashMap.put("accountType","Seller");
-            hashMap.put("profileImage","" + profileIv);
+            //hashMap.put("profileImage","" + profileIv);
 
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-            ref.child(firebaseAuth.getUid()).setValue(hashMap)
+            ref.child(firebaseAuth.getUid()).updateChildren(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -232,10 +268,9 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
                     });
         }
         else {
-            String filePathAndName = "profile_images/" + ""+firebaseAuth.getUid();
-
+            String filePathandName = "profile_images/" + "" + firebaseAuth.getUid();
             //upload image
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathAndName);
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathandName);
             storageReference.putFile(image_uri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -247,8 +282,8 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
                             if(uriTask.isSuccessful()){
 
                                 HashMap<String, Object> hashMap = new HashMap<>();
-                                hashMap.put("uid",""+firebaseAuth.getUid());
-                                hashMap.put("timestamp",""+timestamp);
+                                //hashMap.put("uid",""+firebaseAuth.getUid());
+                                //hashMap.put("timestamp",""+timestamp);
                                 hashMap.put("email",""+email);
                                 hashMap.put("name",""+name);
                                 hashMap.put("shopName",""+shopName);
@@ -260,23 +295,26 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
 
 
                                 //save to db
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-                                ref.child(firebaseAuth.getUid()).setValue(hashMap)
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+                                reference.child(firebaseAuth.getUid()).updateChildren(hashMap)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 progressDialog.dismiss();
-                                                Toast.makeText(ProfileEditSellerActivity.this, "Profile Updated...", Toast.LENGTH_SHORT).show();
+                                                startActivity(new Intent(ProfileEditSellerActivity.this, MainSellerActivity.class));
+                                                finish();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
                                                 progressDialog.dismiss();
-                                                Toast.makeText(ProfileEditSellerActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                startActivity(new Intent(ProfileEditSellerActivity.this, MainSellerActivity.class));
+                                                finish();
                                             }
                                         });
                             }
+
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -406,15 +444,17 @@ public class ProfileEditSellerActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode==RESULT_OK){
+        if(resultCode == RESULT_OK){
             if(requestCode == IMAGE_PICK_GALLERY_CODE){
+
                 image_uri = data.getData();
+
                 profileIv.setImageURI(image_uri);
+
             }
             else if(requestCode == IMAGE_PICK_CAMERA_CODE){
                 profileIv.setImageURI(image_uri);
             }
-
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

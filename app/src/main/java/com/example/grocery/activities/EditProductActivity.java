@@ -121,6 +121,12 @@ public class EditProductActivity extends AppCompatActivity {
                 startActivity(new Intent(EditProductActivity.this, MainSellerActivity.class));
             }
         });
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
     }
 
     private void loadProductDetails() {

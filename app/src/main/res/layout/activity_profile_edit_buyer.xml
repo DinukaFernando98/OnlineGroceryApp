@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="Edit Profile"
+            android:text="User Profile"
             android:textStyle="bold"
             android:textSize="20sp"
             android:textColor="@color/colorWhite"/>
@@ -111,48 +111,49 @@
         android:inputType="textEmailAddress"
         />
 
-    <EditText
-        android:id="@+id/passwordET"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_below="@id/emailET"
-        android:hint="Password"
-        android:padding="10dp"
-        android:layout_marginBottom="40dp"
-        android:background="@drawable/shape_rect02"
-        android:drawableStart="@drawable/ic_key_grey"
-        android:drawablePadding="5dp"
-        android:inputType="textPassword"
-        />
-
-    <EditText
-        android:id="@+id/cPasswordET"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_below="@id/passwordET"
-        android:hint="Confirm Password"
-        android:padding="10dp"
-        android:layout_marginBottom="40dp"
-        android:background="@drawable/shape_rect02"
-        android:drawableStart="@drawable/ic_key_grey"
-        android:drawablePadding="5dp"
-        android:inputType="textPassword"
-        />
-
     <Button
         android:id="@+id/updateBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minWidth="120dp"
-        android:layout_below="@id/cPasswordET"
+        android:layout_below="@id/emailET"
         android:background="#85B54F"
         android:layout_marginTop="30dp"
         android:textColor="#FFFFFF"
-        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="220dp"
         android:text="Update"
         android:drawablePadding="5dp"
         />
+    <Button
+        android:id="@+id/deleteBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="120dp"
+        android:layout_below="@id/emailET"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="80dp"
+        android:background="#DC491C"
+        android:textColor="#FFFFFF"
+        android:text="Delete"
+        android:drawablePadding="5dp"
+        />
+
+    <EditText
+        android:id="@+id/accTypeET"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"></EditText>
+
+    <EditText
+        android:id="@+id/uidET"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"></EditText>
+
+    <EditText
+        android:id="@+id/timestampET"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"></EditText>
 
 </RelativeLayout>

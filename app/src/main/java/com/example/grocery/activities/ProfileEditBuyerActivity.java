@@ -24,6 +24,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.grocery.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,18 +35,25 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
 
 public class ProfileEditBuyerActivity extends AppCompatActivity {
     private ImageButton backBtn;
     private ImageView profileIv;
-    private EditText nameET, phoneET, addressET, emailET;
-    private Button updateBtn;
+    private EditText nameET, phoneET, addressET, emailET,  accTypeET,
+            uidET, timestampET;
+    private Button updateBtn, deleteBtn;
 
     //permissions
     private static final int CAMERA_REQUEST_CODE = 200;
     private static final int STORAGE_REQUEST_CODE = 300;
     private static final int IMAGE_PICK_GALLERY_CODE = 400;
-    private static final int IMAGE_PICK_CAMERA_CODE = 400;
+    private static final int IMAGE_PICK_CAMERA_CODE = 500;
 
     //permission arrays
     private String[] cameraPermissions;
@@ -53,6 +64,7 @@ public class ProfileEditBuyerActivity extends AppCompatActivity {
 
     //firebase
     private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
     private ProgressDialog progressDialog;
 
     @Override
@@ -67,15 +79,23 @@ public class ProfileEditBuyerActivity extends AppCompatActivity {
         addressET = findViewById(R.id.addressET);
         emailET = findViewById(R.id.emailET);
         updateBtn = findViewById(R.id.updateBtn);
+        accTypeET = findViewById(R.id.accTypeET);
+        uidET = findViewById(R.id.uidET);
+        timestampET = findViewById(R.id.timestampET);
+        deleteBtn = findViewById(R.id.deleteBtn);
 
 
         //init permission array
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
         firebaseAuth = FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please wait..");
         progressDialog.setCanceledOnTouchOutside(false);
+
+        checkUser();
+        loadMyInfo();
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +113,42 @@ public class ProfileEditBuyerActivity extends AppCompatActivity {
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                inputData();
+            }
+        });
 
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(ProfileEditBuyerActivity.this);
+                dialog.setTitle("Are you sure you want to delete this account ?");
+                dialog.setMessage("Deleting this account will result in completely removing your" + "account from the system and you won't be able to access the app");
+                dialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        firebaseUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(ProfileEditBuyerActivity.this, "Account Deleted", Toast.LENGTH_SHORT).show();
+
+                                    firebaseAuth.signOut();
+                                    checkUser();
+                                }else{
+                                    Toast.makeText(ProfileEditBuyerActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                });
+                dialog.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                AlertDialog alertDialog = dialog.create();
+                alertDialog.show();
             }
         });
     }
@@ -120,15 +175,26 @@ public class ProfileEditBuyerActivity extends AppCompatActivity {
                             String address = ""+ds.child("address").getValue();
                             String name = ""+ds.child("name").getValue();
                             String email = ""+ds.child("email").getValue();
-                            String phone = ""+ds.child("phone").getValue();
+                            String phoneNumber = ""+ds.child("phoneNumber").getValue();
                             String uid = ""+ds.child("uid").getValue();
+                            String timestamp = ""+ds.child("timestamp").getValue();
+                            String profileImage = ""+ds.child("profileImage").getValue();
+
 
                             nameET.setText(name);
-                            phoneET.setText(phone);
+                            phoneET.setText(phoneNumber);
                             addressET.setText(address);
                             emailET.setText(email);
-                            profileIv.setImageResource(R.drawable.ic_person_grey);
+                            accTypeET.setText(accountType);
+                           // uidET.setText(uid);
+                            //timestampET.setText(timestamp);
+                            accTypeET.setText(accountType);
 
+                            try {
+                                Picasso.get().load(profileImage).placeholder(R.drawable.ic_baseline_add_shopping_cart_24).into(profileIv);
+                            }catch (Exception e){
+                                profileIv.setImageResource(R.drawable.ic_baseline_add_shopping_cart_24);
+                            }
                         }
 
                     }
@@ -138,6 +204,112 @@ public class ProfileEditBuyerActivity extends AppCompatActivity {
 
                     }
                 });
+    }
+
+    private String name, phoneNumber, address, email, accType, uid, timestamp;
+    private void inputData() {
+        name = nameET.getText().toString().trim();
+        phoneNumber = phoneET.getText().toString().trim();
+        address = addressET.getText().toString().trim();
+        email = emailET.getText().toString().trim();
+        accType = accTypeET.getText().toString().trim();
+
+
+        updateProfile();
+    }
+
+    private void updateProfile() {
+        progressDialog.setMessage("Updating profile...");
+        progressDialog.show();
+
+        final String timestamp = ""+System.currentTimeMillis();
+
+        if(image_uri == null){
+
+            HashMap<String, Object> hashMap = new HashMap<>();
+            //hashMap.put("uid",""+firebaseAuth.getUid());
+            //hashMap.put("timestamp",""+timestamp);
+            hashMap.put("email",""+email);
+            hashMap.put("name",""+name);
+            hashMap.put("phoneNumber",""+phoneNumber);
+            hashMap.put("address",""+address);
+            hashMap.put("accountType","Buyer");
+
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+            ref.child(firebaseAuth.getUid()).updateChildren(hashMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            progressDialog.dismiss();
+                            Toast.makeText(ProfileEditBuyerActivity.this, "Profile Updated...", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(ProfileEditBuyerActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+        else {
+            String filePathandName = "profile_images/" + "" + firebaseAuth.getUid();
+            //upload image
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathandName);
+            storageReference.putFile(image_uri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                            while (!uriTask.isSuccessful());
+                            Uri downloadImageUri = uriTask.getResult();
+
+                            if(uriTask.isSuccessful()){
+
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                //hashMap.put("uid",""+firebaseAuth.getUid());
+                                //hashMap.put("timestamp",""+timestamp);
+                                hashMap.put("email",""+email);
+                                hashMap.put("name",""+name);
+                                hashMap.put("phoneNumber",""+phoneNumber);
+                                hashMap.put("address",""+address);
+                                hashMap.put("profileImage",""+downloadImageUri);
+                                hashMap.put("accountType","Buyer");
+
+
+                                //save to db
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+                                reference.child(firebaseAuth.getUid()).updateChildren(hashMap)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                progressDialog.dismiss();
+                                                startActivity(new Intent(ProfileEditBuyerActivity.this, MainBuyerActivity.class));
+                                                finish();
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                progressDialog.dismiss();
+                                                startActivity(new Intent(ProfileEditBuyerActivity.this, MainBuyerActivity.class));
+                                                finish();
+                                            }
+                                        });
+                            }
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(ProfileEditBuyerActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+        }
+
     }
 
     private void showImagePickDialog() {
@@ -254,15 +426,17 @@ public class ProfileEditBuyerActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode==RESULT_OK){
+        if(resultCode == RESULT_OK){
             if(requestCode == IMAGE_PICK_GALLERY_CODE){
+
                 image_uri = data.getData();
+
                 profileIv.setImageURI(image_uri);
+
             }
             else if(requestCode == IMAGE_PICK_CAMERA_CODE){
                 profileIv.setImageURI(image_uri);
             }
-
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
