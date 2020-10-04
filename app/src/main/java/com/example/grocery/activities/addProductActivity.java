@@ -106,12 +106,6 @@ public class addProductActivity extends AppCompatActivity {
             }
         });
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
 
         backHomeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,6 +219,7 @@ public class addProductActivity extends AppCompatActivity {
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
+                                                    progressDialog.dismiss();
                                                     Toast.makeText(addProductActivity.this, "Product Added...", Toast.LENGTH_SHORT).show();
                                                     clearData();
                                                 }

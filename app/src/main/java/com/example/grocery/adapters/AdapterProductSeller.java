@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.grocery.FilterProduct;
+import com.example.grocery.activities.MainSellerActivity;
 import com.example.grocery.models.ModelProduct;
 import com.example.grocery.R;
 import com.example.grocery.activities.EditProductActivity;
@@ -133,7 +134,7 @@ public class AdapterProductSeller extends RecyclerView.Adapter<AdapterProductSel
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bottomSheetDialog.dismiss();
+                //bottomSheetDialog.dismiss();
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Delete")
                         .setMessage("Are you sure you want to delete this product ?")
@@ -156,7 +157,9 @@ public class AdapterProductSeller extends RecyclerView.Adapter<AdapterProductSel
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bottomSheetDialog.dismiss();
+                //bottomSheetDialog.dismiss();
+                Intent intent = new Intent(context, MainSellerActivity.class);
+                context.startActivity(intent);
             }
         });
     }

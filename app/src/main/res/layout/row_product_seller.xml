@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,11 +16,11 @@
             android:id="@+id/productIconIv"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_centerVertical="true"
             android:layout_marginEnd="5dp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_baseline_add_shopping_cart_24"/>
+            android:src="@drawable/ic_baseline_add_shopping_cart_24" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,12 +41,21 @@
                 android:layout_height="wrap_content"
                 android:text="1 KG"
                 android:textColor="@color/colorBlack"/>
+
+            <TextView
+                android:id="@+id/rsTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/originalPriceTv"
+                android:text="Rs."
+                android:textColor="@color/colorBlack" />
+
             <TextView
                 android:id="@+id/originalPriceTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="$20"
-                android:textColor="@color/colorBlack"/>
+                android:textColor="@color/colorBlack" />
 
         </LinearLayout>
         <ImageView
@@ -60,5 +70,8 @@
             android:src="@drawable/ic_next_gray"/>
 
     </RelativeLayout>
+
+
+    />
 
 </androidx.cardview.widget.CardView>
