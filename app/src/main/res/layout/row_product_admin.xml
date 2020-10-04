@@ -16,11 +16,11 @@
             android:id="@+id/productIconIv"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="5dp"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_baseline_add_shopping_cart_24" />
-
+            android:src="@drawable/ic_baseline_add_shopping_cart_24"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,15 +49,29 @@
                 android:layout_toStartOf="@id/originalPriceTv"
                 android:text="Rs."
                 android:textColor="@color/colorBlack" />
-
             <TextView
                 android:id="@+id/originalPriceTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="$20"
-                android:textColor="@color/colorBlack" />
+                android:textColor="@color/colorBlack"/>
+
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/addToCartTv"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="View "
+          android:layout_marginVertical="38dp"
+            android:layout_marginHorizontal="23dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/colorPrimaryDark"
+            />
+
         <ImageView
             android:id="@+id/nextIv"
             android:layout_alignParentEnd="true"
@@ -70,8 +84,5 @@
             android:src="@drawable/ic_next_gray"/>
 
     </RelativeLayout>
-
-
-    />
 
 </androidx.cardview.widget.CardView>
